@@ -21,6 +21,11 @@
 
   <section>{{ .Content }}</section>
 
+  {{ if .Params.source }}
+  <footer class="mt-12 flex flex-wrap">
+    <p class="text-neutral-500 text-sm">This content was created with reference to the article <a href="{{ .Params.source }}" rel="nofollow">{{ .Params.source }}</a>, licensed under CC BY-SA.</p>
+  </footer>
+  {{ end }}
   <!-- Post Tags -->
   {{ if .Params.tags }}
   <footer class="mt-12 flex flex-wrap">
