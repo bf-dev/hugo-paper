@@ -2,6 +2,7 @@
   <div class="relative z-50 mr-auto flex items-center">
     <a
       class="-translate-x-[1px] -translate-y-[1px] text-2xl font-semibold"
+      id="main_href"
       href="{{ `` | absLangURL }}"
       >{{ site.Title }}</a
     >
@@ -11,13 +12,30 @@
       aria-label="Dark"
     ></div>
   </div>
-
-  <div
-    class="btn-menu relative z-50 -mr-8 flex h-[4.5rem] w-[5rem] shrink-0 cursor-pointer flex-col items-center justify-center gap-2.5 lg:hidden"
-    role="button"
-    aria-label="Menu"
-  ></div>
-
+  <button
+    class="my-5 rounded border border-neutral-200 bg-transparent pl-3 pr-8 text-neutral-500 text-opacity-60 focus:ring dark:border-neutral-700"
+    id="search"
+  >
+    Search anything...
+  </button>
+  <button
+    class="z-50 flex items-center fill-neutral-500"
+    id="quit-search"
+    style="display: none"
+    onclick="quitSearch()"
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="float-right"
+      height="24"
+      viewBox="0 -960 960 960"
+      width="24"
+    >
+      <path
+        d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"
+      />
+    </svg>
+  </button>
   {{ $bg_color := $.Scratch.Get "bg_color" }}<!---->
 
   <script>
@@ -28,9 +46,25 @@
     }, 10);
 
     // mobile menu
-    const btnMenu = document.querySelector('.btn-menu');
+    const btnMenu = document.querySelector('#search');
+    const quitSearchButton = document.querySelector('#quit-search');
+
+    function quitSearch() {
+      document.querySelector('html').classList.remove('open');
+      document.querySelector('#main_href').href = '{{ `` | absLangURL }}';
+      document.querySelector('#quit-search').style.display = 'none';
+      return true;
+    }
+
     btnMenu.addEventListener('click', () => {
-      htmlClass.toggle('open');
+      const isOpened = htmlClass.contains('open');
+      if (!isOpened) {
+        document.querySelector('#main_href').href = '#';
+        document.querySelector('#main_href').onclick = quitSearch;
+        htmlClass.add('open');
+        document.querySelector('#quit-search').style.display = 'flex';
+        document.querySelector('.pagefind-ui__search-input').focus();
+      }
     });
 
     // dark theme
@@ -62,39 +96,18 @@
       setDark(localStorage.getItem('dark') !== 'true');
     });
   </script>
-
+  <script>
+    window.addEventListener('DOMContentLoaded', (event) => {
+      new PagefindUI({ element: '#search_bar', showSubResults: true });
+    });
+  </script>
   <div
-    class="nav-wrapper fixed inset-x-0 top-full z-40 flex h-full select-none flex-col justify-center pb-16 duration-200 dark:bg-black lg:static lg:h-auto lg:flex-row lg:!bg-transparent lg:pb-0 lg:transition-none"
+    class="nav-wrapper fixed inset-x-0 top-full z-40 flex h-full select-none flex-col overflow-y-scroll duration-200 dark:bg-black"
   >
-    {{ $url := .RelPermalink }}<!---->
-    {{ with site.Menus.main }}
-    <nav class="lg:ml-12 lg:flex lg:flex-row lg:items-center lg:space-x-6">
-      {{ range . }}
-      <a
-        class="block text-center text-2xl leading-[5rem] lg:text-base lg:font-normal"
-        href="{{ .URL }}"
-        >{{ .Name }}</a
-      >
-      {{ end }}
+    <nav class="container mx-auto max-w-3xl space-y-10 px-8 py-16 dark:invert">
+      <div class="flex space-x-2">
+        <div id="search_bar" class="w-full"></div>
+      </div>
     </nav>
-    {{ end }}<!---->
-
-    {{ with $.Scratch.Get "social_list" }}
-    <nav
-      class="mt-12 flex justify-center space-x-10 dark:invert lg:ml-12 lg:mt-0 lg:items-center lg:space-x-6"
-    >
-      {{ range . }}<!---->
-      <a
-        class="h-8 w-8 text-[0] [background:var(--url)_center_center/cover_no-repeat] lg:h-6 lg:w-6"
-        style="--url: url(./{{ . }}.svg)"
-        href="{{ if eq . `rss` }}{{ `index.xml` | absURL }}{{ else if eq . `mastodon` }}{{ index site.Params . }}{{ else }}https://{{ . }}.com/{{ if eq . `linkedin` }}in/{{ end }}{{ index site.Params . }}{{ end }}"
-        target="_blank"
-        rel="{{ if eq . `rss` }}alternate{{ else }}me{{ end }}"
-      >
-        {{ . }}
-      </a>
-      {{ end }}<!---->
-    </nav>
-    {{ end }}<!---->
   </div>
 </header>
