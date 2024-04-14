@@ -27,8 +27,11 @@
   <meta name="author" content="{{ $site_author }}" />
   {{ end }}
   <!--AdSense-->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3342123961515611"
-     crossorigin="anonymous"></script>
+  <script
+    async
+    src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3342123961515611"
+    crossorigin="anonymous"
+  ></script>
   <!-- CSS & JS -->
   {{ $main := resources.Get "main.css" }}
   <!---->
@@ -104,5 +107,7 @@
   <!-- Canonical -->
   <link rel="canonical" href="{{ .Permalink }}" />
   {{ end }}
+  <link href="/pagefind/pagefind-ui.css" rel="stylesheet" />
+  <script src="/pagefind/pagefind-ui.js"></script>
   <!---->
 </head>
